@@ -1,42 +1,11 @@
-# Zend-Decoder
-支持php5.6 zend解密，其他版本未测。
+1) Build the container:
 
-## 编译 xcache
-### Ubuntu + php5.6：
-```
-$ sudo apt-get install python-software-properties
-$ sudo add-apt-repository ppa:ondrej/php
-$ sudo apt-get update
-$ apt-get install php5.6-dev
-$ git clone https://github.com/lighttpd/xcache
-$ cd xcache
-$ patch -p1 < ../xcache.patch
-$ phpize
-$ ./configure --enable-xcache-disassembler
-$ make
-```
-[编译参考](https://github.com/lighttpd/xcache/blob/master/INSTALL)
+    docker build -t zenddecoder .
 
-### windows + php5.6
-[如何编译](https://github.com/hylent/docs/blob/master/build-php-extension-on-windows.md)
-## 使用
-### 修改php.ini
-```
-extension=xcache.so
-zend_extension = ZendGuardLoader.so
-或
-extension=xcache.dll
-zend_extension = ZendGuardLoader.dll
-```
-### 解码
-```
-php index.php encode.php
-或
-php index2.php encode.php
+2) Run the container, with the code base as a bind mount, and drop into a shell:
 
-```
+    docker run -v /path/to/your/codebase:/src -it zenddecoder /bin/bash
 
+3) Now it’s possible to deobfuscate your entire code base with one-liners like this:
 
-## Decompiler.class.php
-[Decompiler.class.php](https://github.com/lighttpd/xcache/blob/master/lib/Decompiler.class.php)
-
+    for f in $(find /src/ -name '*.php'); do php index.php $f > ${f::-4}".dec.php"; done"
